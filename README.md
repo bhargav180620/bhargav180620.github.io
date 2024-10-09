@@ -4,7 +4,7 @@ This is a simple page I created. You can view it live at [My GitHub Page](https:
 
 Alternatively, you can also check out the HTML code below.
 
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +63,6 @@ Alternatively, you can also check out the HTML code below.
         <button class="button" id="yes">Yes</button>
         <button class="button" id="no">No</button>
     </div>
-
     <script>
         const noButton = document.getElementById('no');
         noButton.addEventListener('mouseover', () => {
@@ -75,4 +74,3 @@ Alternatively, you can also check out the HTML code below.
     </script>
 </body>
 </html>
-```
