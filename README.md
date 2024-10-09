@@ -1,6 +1,6 @@
 # Will You Go Out With Me?
 
-This is a simple page I created. You can view it live at [My GitHub Page](https://yourusername.github.io/repositoryname/).
+This is a simple page I created. You can view it live at [My GitHub Page](https://bhargav180620.github.io/repositoryname/).
 
 Alternatively, you can also check out the HTML code below.
 
