@@ -22,77 +22,100 @@
       --maxw:1200px;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
-    /* (CSS same as original, truncated here for brevity in editor) */
-    /* Keep the full CSS from your original file when you copy this back to your site. */
     @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
     @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: translateY(0);} }
     @keyframes scaleIn { from { opacity: 0; transform: scale(0.95);} to { opacity: 1; transform: scale(1);} }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%), var(--bg); background-size: 100% 100%; animation: gradientShift 20s ease infinite; color: var(--text); -webkit-font-smoothing: antialiased; padding: 0; overflow-x: hidden; }
+    body {
+      margin: 0; min-height: 100vh; background: radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%), var(--bg);
+      background-size: 100% 100%; animation: gradientShift 20s ease infinite; color: var(--text); -webkit-font-smoothing: antialiased; padding: 0; overflow-x: hidden;
+    }
     .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-    .particle { position: absolute; background: radial-gradient(circle, rgba(6, 182, 212, 0.3), transparent); border-radius: 50%; animation: float 6s ease-in-out infinite; }
-    .particle:nth-child(1) { width: 3px; height: 3px; top: 20%; left: 20%; animation-delay: 0s; }
-    .particle:nth-child(2) { width: 4px; height: 4px; top: 60%; left: 80%; animation-delay: 2s; }
-    .particle:nth-child(3) { width: 2px; height: 2px; top: 40%; left: 60%; animation-delay: 4s; }
-    .particle:nth-child(4) { width: 3px; height: 3px; top: 80%; left: 30%; animation-delay: 1s; }
-    .particle:nth-child(5) { width: 4px; height: 4px; top: 10%; left: 70%; animation-delay: 3s; }
+    .particle { position: absolute; background: radial-gradient(circle, rgba(6, 182, 212, 0.3), transparent); border-radius: 50%; animation: float 6s ease-in-out infinite; will-change: transform, opacity; }
+    .particle[data-size="s"]{ width:4px; height:4px; }
+    .particle[data-size="m"]{ width:8px; height:8px; }
+    .particle[data-size="l"]{ width:14px; height:14px; }
+
     .wrap { position: relative; z-index: 1; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 20px; }
     header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; margin-bottom: 40px; animation: fadeInUp 0.8s ease; }
     .brand { display: flex; gap: 16px; align-items: center; }
-    .logo { width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), #8b5cf6); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 24px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .logo { width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), #8b5cf6); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 24px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); transition: transform 0.18s ease, box-shadow 0.18s ease; cursor: grab; user-select: none; }
+    .logo:active{ cursor: grabbing; }
     .brand-text h2 { font-size: 20px; margin-bottom: 2px; background: linear-gradient(135deg, var(--accent), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .brand-text p { color: var(--muted); font-size: 13px; }
     nav { display: flex; gap: 24px; align-items: center; }
-    nav a { color: var(--muted); text-decoration: none; font-weight: 500; transition: color 0.3s ease; position: relative; }
+    nav a { color: var(--muted); text-decoration: none; font-weight: 500; transition: color 0.25s ease; position: relative; }
     nav a:hover { color: var(--accent); }
     nav a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width 0.3s ease; }
     nav a:hover::after { width: 100%; }
     .resume-btn { padding: 10px 20px; background: var(--glass); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; color: var(--accent); font-weight: 600; transition: all 0.3s ease; }
+    .resume-btn:hover { background: var(--accent); color: var(--bg); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3); }
+
+    /* Hero Section */
     .hero { display: grid; grid-template-columns: 1fr 380px; gap: 40px; margin-bottom: 60px; animation: fadeInUp 1s ease 0.2s backwards; }
-    .hero-content { display: flex; flex-direction: column; justify-content: center; }
+    .hero-content { display: flex; flex-direction: column; justify-content: center; transform-origin: center; will-change: transform; }
     .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 20px; line-height: 1.1; background: linear-gradient(135deg, #fff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero .tagline { font-size: clamp(1.1rem, 2vw, 1.4rem); color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
-    .hero .description { color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+    .hero .description { color: var(--muted); line-height: 1.8; margin-bottom: 32px; max-width: 70ch; }
     .cta-group { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
-    .btn { padding: 14px 28px; border-radius: 12px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+    .btn { padding: 14px 28px; border-radius: 12px; font-weight: 600; text-decoration: none; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 8px; }
     .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: #fff; box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3); }
+    .btn-primary:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 32px rgba(6, 182, 212, 0.45); }
+    .btn-secondary { background: var(--glass); color: var(--text); border: 1px solid rgba(255,255,255,0.06); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.06); border-color: var(--accent); }
     .tech-stack { display: flex; flex-wrap: wrap; gap: 10px; }
-    .tech-badge { padding: 8px 16px; background: var(--glass); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 20px; font-size: 13px; color: var(--accent); font-weight: 600; transition: all 0.3s ease; }
-    .info-card { background: linear-gradient(135deg, var(--card), rgba(15, 22, 41, 0.8)); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: var(--radius); padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); animation: scaleIn 0.8s ease 0.4s backwards; }
+    .tech-badge { padding: 8px 16px; background: var(--glass); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 20px; font-size: 13px; color: var(--accent); font-weight: 600; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .tech-badge:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(6,182,212,0.12); }
+
+    .info-card { background: linear-gradient(135deg, var(--card), rgba(15, 22, 41, 0.8)); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: var(--radius); padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); animation: scaleIn 0.8s ease 0.4s backwards; transform-origin: center; will-change: transform, box-shadow; }
+    .info-card:hover { box-shadow: 0 30px 80px rgba(0,0,0,0.6); transform: translateY(-6px); }
+
     .info-card h3 { font-size: 18px; margin-bottom: 20px; color: var(--accent); }
     .info-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; color: var(--muted); font-size: 14px; line-height: 1.6; }
     .info-item strong { color: var(--text); min-width: 70px; }
+    .info-item a { color: var(--accent); text-decoration: none; }
     .divider { height: 1px; background: rgba(255, 255, 255, 0.05); margin: 24px 0; }
     .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
-    .skill-tag { padding: 10px; background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.1); border-radius: 10px; font-size: 12px; text-align: center; color: var(--muted); transition: all 0.3s ease; }
+    .skill-tag { padding: 10px; background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.1); border-radius: 10px; font-size: 12px; text-align: center; color: var(--muted); transition: transform 0.18s ease, color 0.18s ease; }
+    .skill-tag:hover { transform: translateY(-6px); color: var(--accent); border-color: var(--accent); }
+
+    /* Cards */
     .card { background: linear-gradient(135deg, var(--card), rgba(15, 22, 41, 0.8)); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: var(--radius); padding: 32px; margin-bottom: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: fadeInUp 1s ease backwards; }
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 24px; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 30px 80px rgba(0,0,0,0.65); }
     .project-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 24px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+    .project-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--accent), #8b5cf6); transform: scaleX(0); transition: transform 0.3s ease; transform-origin: left; }
+    .project-card:hover::before { transform: scaleX(1); }
+    .project-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+    /* Timeline */
     .timeline { list-style: none; position: relative; padding-left: 30px; margin-top: 24px; }
+    .timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(180deg, var(--accent), #8b5cf6); }
+
+    /* Contact */
     .contact-form { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
     .form-input { padding: 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; color: var(--text); font-size: 14px; transition: all 0.3s ease; }
+    .form-btn { padding: 14px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border: none; border-radius: 10px; color: #fff; font-weight: 600; cursor: pointer; }
+
     footer { text-align: center; padding: 40px 0; color: var(--muted); font-size: 14px; margin-top: 60px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+
+    /* Responsive */
     @media (max-width: 1024px) { .hero { grid-template-columns: 1fr; } .info-card { margin-top: 30px; } }
-    @media (max-width: 768px) { body { padding: 0 16px; } header { flex-direction: column; gap: 20px; text-align: center; } nav { flex-direction: column; gap: 12px; } .hero h1 { font-size: 2.5rem; } }
+    @media (max-width: 768px) { body { padding: 0 16px; } header { flex-direction: column; gap: 20px; text-align: center; } nav { flex-direction: column; gap: 12px; } .hero h1 { font-size: 2.5rem; } .logo { margin: 0 auto; } }
   </style>
 </head>
 <body>
-  <!-- Animated background particles -->
-  <div class="particles">
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
+  <!-- Animated background particles (interactive) -->
+  <div class="particles" aria-hidden="true">
+    <!-- We'll create particles programmatically for variety -->
   </div>
 
   <div class="wrap">
     <!-- Header -->
     <header>
       <div class="brand">
-        <div class="logo">BB</div>
+        <div class="logo" id="logo">BB</div>
         <div class="brand-text">
           <h2>Bhargav Bhandari</h2>
           <p>Data Engineer · ETL · Platform & Observability</p>
@@ -109,8 +132,8 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
+    <section class="hero" id="hero">
+      <div class="hero-content" id="heroContent">
         <h1>Hi, I'm Bhargav 👋</h1>
         <p class="tagline">Data Engineer building scalable data platforms & ML infrastructure</p>
         <p class="description">
@@ -120,14 +143,14 @@
         </p>
         
         <div class="cta-group">
-          <a href="#contact" class="btn btn-primary">
+          <a href="#contact" class="btn btn-primary" id="contactBtn">
             <span>Get In Touch</span>
             <span>→</span>
           </a>
           <a href="#projects" class="btn btn-secondary">View Projects</a>
         </div>
         
-        <div class="tech-stack">
+        <div class="tech-stack" id="techStack">
           <span class="tech-badge">Python</span>
           <span class="tech-badge">Spark</span>
           <span class="tech-badge">Kafka</span>
@@ -136,7 +159,7 @@
         </div>
       </div>
       
-      <aside class="info-card">
+      <aside class="info-card" id="infoCard">
         <h3>Quick Info</h3>
         <div class="info-item">
           <strong>Location:</strong>
@@ -278,26 +301,146 @@
     </footer>
   </div>
 
-  <!-- Defensive JS: remove accidental visible doctype text nodes inserted into the body -->
+  <!-- Interactive JS: particles, parallax, draggable logo, subtle cursor effects -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Walk text nodes and remove accidental visible doctype-like strings
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-      const nodes = [];
-      let n;
-      while (n = walker.nextNode()) nodes.push(n);
-      nodes.forEach(node => {
-        if (!node.nodeValue) return;
-        const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, '');
-        if (cleaned !== node.nodeValue) node.nodeValue = cleaned;
+    (function(){
+      // --- Particles generation ---
+      const particlesEl = document.querySelector('.particles');
+      const PARTICLE_COUNT = Math.min(Math.max(Math.floor(window.innerWidth / 60), 12), 60);
+      const sizes = ['s','m','l'];
+      for(let i=0;i<PARTICLE_COUNT;i++){
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.dataset.size = sizes[Math.floor(Math.random()*sizes.length)];
+        // random position
+        p.style.left = Math.random()*100 + '%';
+        p.style.top = Math.random()*100 + '%';
+        p.style.opacity = (0.15 + Math.random()*0.6).toFixed(2);
+        p.style.transform = `translate3d(0,0,0)`;
+        p.style.pointerEvents = 'none';
+        particlesEl.appendChild(p);
+      }
+
+      // --- Parallax on mouse move ---
+      const hero = document.getElementById('hero');
+      const heroContent = document.getElementById('heroContent');
+      const infoCard = document.getElementById('infoCard');
+      const techStack = document.getElementById('techStack');
+
+      function handleMove(e){
+        const rect = hero.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5..0.5
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        // subtle 3D tilt for hero content
+        heroContent.style.transform = `translateZ(0) rotateX(${(-y*6).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg)`;
+        // info card moves slightly opposite
+        infoCard.style.transform = `translate3d(${(-x*12).toFixed(2)}px,${(-y*8).toFixed(2)}px,0)`;
+        // tech badges float
+        Array.from(techStack.children).forEach((b, i)=>{
+          const dx = (x*(6 + i)) * (i%2?1:-1);
+          const dy = (y*(4 + i%3));
+          b.style.transform = `translate3d(${dx.toFixed(1)}px,${dy.toFixed(1)}px,0) rotate(${(dx/8).toFixed(2)}deg)`;
+        });
+
+        // move particles with parallax effect based on mouse
+        document.querySelectorAll('.particle').forEach((p, idx)=>{
+          const depth = p.dataset.size === 'l' ? 0.3 : (p.dataset.size === 'm' ? 0.5 : 0.8);
+          const moveX = x * 40 * depth * (idx%2?1:-1);
+          const moveY = y * 30 * depth * (idx%3?1:-1);
+          p.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+        });
+      }
+
+      // when pointer leaves hero area, reset transforms smoothly
+      hero.addEventListener('pointermove', handleMove);
+      hero.addEventListener('pointerleave', ()=>{
+        heroContent.style.transform = '';
+        infoCard.style.transform = '';
+        techStack.querySelectorAll('.tech-badge').forEach(b=>b.style.transform='');
+        document.querySelectorAll('.particle').forEach(p=>p.style.transform='');
       });
 
-      // Additionally remove any stray doctype-looking elements inserted as elements
-      document.querySelectorAll('body *').forEach(el => {
-        if (el.tagName && el.tagName.toLowerCase().includes('!doctype')) {
-          el.remove();
-        }
+      // --- Draggable logo ---
+      const logo = document.getElementById('logo');
+      let dragging = false, startX=0, startY=0, origX=0, origY=0;
+      logo.addEventListener('pointerdown', (e)=>{
+        dragging = true; startX = e.clientX; startY = e.clientY;
+        const rect = logo.getBoundingClientRect(); origX = rect.left; origY = rect.top;
+        logo.setPointerCapture(e.pointerId);
+        logo.style.transition = 'none';
       });
+      window.addEventListener('pointermove', (e)=>{
+        if(!dragging) return;
+        const dx = e.clientX - startX; const dy = e.clientY - startY;
+        logo.style.position = 'relative';
+        logo.style.left = dx + 'px';
+        logo.style.top = dy + 'px';
+        logo.style.transform = `translateZ(0) rotate(${dx/12}deg) scale(1.02)`;
+      });
+      window.addEventListener('pointerup', (e)=>{
+        if(!dragging) return; dragging=false;
+        logo.releasePointerCapture && logo.releasePointerCapture(e.pointerId);
+        // animate back to original spot
+        logo.style.transition = 'all 400ms cubic-bezier(.2,.9,.3,1)';
+        logo.style.left = '0px'; logo.style.top = '0px'; logo.style.transform = '';
+        setTimeout(()=>{ logo.style.transition = ''; }, 500);
+      });
+
+      // --- Hover shine on buttons ---
+      document.querySelectorAll('.btn').forEach(btn=>{
+        btn.addEventListener('mousemove', (e)=>{
+          const r = btn.getBoundingClientRect(); const px = e.clientX - r.left; const py = e.clientY - r.top;
+          btn.style.boxShadow = `0 12px 30px rgba(6,182,212,0.12), ${ (px-r.width/2)/10 }px ${ (py-r.height/2)/10 }px 40px rgba(11,78,99,0.04)`;
+        });
+        btn.addEventListener('mouseleave', ()=> btn.style.boxShadow = '');
+      });
+
+      // --- Keyboard accessibility: focus outlines for keyboard users only ---
+      function handleFirstTab(e){ if(e.key === 'Tab'){ document.body.classList.add('show-focus-outlines'); window.removeEventListener('keydown', handleFirstTab); }}
+      window.addEventListener('keydown', handleFirstTab);
+
+      // --- Defensive: remove stray doctype-like text nodes inserted in body ---
+      function cleanDoctypeText(){
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+        const nodes = [];
+        let n;
+        while(n = walker.nextNode()) nodes.push(n);
+        nodes.forEach(node=>{
+          if(!node.nodeValue) return;
+          const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, '');
+          if(cleaned !== node.nodeValue) node.nodeValue = cleaned;
+        });
+      }
+      cleanDoctypeText();
+
+      // Recompute particles on resize
+      let resizeTimeout;
+      window.addEventListener('resize', ()=>{
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(()=>{
+          // remove existing, re-create
+          particlesEl.innerHTML = '';
+          const count = Math.min(Math.max(Math.floor(window.innerWidth / 60), 12), 60);
+          for(let i=0;i<count;i++){
+            const p = document.createElement('div'); p.className='particle'; p.dataset.size=sizes[Math.floor(Math.random()*sizes.length)]; p.style.left = Math.random()*100+'%'; p.style.top = Math.random()*100+'%'; p.style.opacity = (0.12 + Math.random()*0.6).toFixed(2); particlesEl.appendChild(p);
+          }
+        }, 250);
+      });
+
+      // small entry animation: fade in hero elements
+      window.requestAnimationFrame(()=>{
+        document.querySelectorAll('.hero-content > *').forEach((el,i)=>{ el.style.opacity=0; el.style.transform='translateY(10px)'; setTimeout(()=>{ el.style.transition='all 420ms cubic-bezier(.2,.9,.3,1)'; el.style.opacity=1; el.style.transform='translateY(0)'; }, 120*i); });
+      });
+
+    })();
+  </script>
+
+  <!-- Defensive JS: keep cleaning doctype nodes just in case -->
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+      const nodes=[]; let n; while(n = walker.nextNode()) nodes.push(n);
+      nodes.forEach(node=>{ if(!node.nodeValue) return; const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, ''); if(cleaned !== node.nodeValue) node.nodeValue = cleaned; });
     });
   </script>
 </body>
