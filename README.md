@@ -127,7 +127,7 @@
         <a href="#projects">Projects</a>
         <a href="#experience">Experience</a>
         <a href="#contact">Contact</a>
-        <a href="Bhargav_Bhandari_CV.pdf" class="resume-btn" id="resumeBtn">Resume</a>
+        <a href="[Bhargav_Bhandari_CV.pdf](https://raw.githubusercontent.com/bhargav180620/bhargav180620.github.io/main/Bhargav_Bhandari_CV%20.pdf)" class="resume-btn" id="resumeBtn">Resume</a>
       </nav>
     </header>
 
