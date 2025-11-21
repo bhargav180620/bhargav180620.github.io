@@ -287,7 +287,7 @@
       <h3>Let's Connect</h3>
       <p class="timeline-desc">If you'd like to collaborate, hire me, or chat about data engineering — drop a message below.</p>
 
-      <form class="contact-form" action="#" onsubmit="alert('Thanks — form submission is disabled in this demo.'); return false;">
+      <form class="contact-form" action="#" onsubmit="return handleContactSubmit(event);">
         <input class="form-input" type="text" name="name" placeholder="Your name" required />
         <input class="form-input" type="email" name="email" placeholder="Your email" required />
         <input class="form-input" type="text" name="subject" placeholder="Subject" />
@@ -335,7 +335,77 @@
         heroContent.style.transform = `translateZ(0) rotateX(${(-y*6).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg)`;
         // info card moves slightly opposite
         infoCard.style.transform = `translate3d(${(-x*12).toFixed(2)}px,${(-y*8).toFixed(2)}px,0)`;
-        // tech badges float
+        // tech badges float<!doctype html>
+      function handleFirstTab(e){ if(e.key === 'Tab'){ document.body.classList.add('show-focus-outlines'); window.removeEventListener('keydown', handleFirstTab); }}
+      window.addEventListener('keydown', handleFirstTab);
+
+      // --- Defensive: remove stray doctype-like text nodes inserted in body ---
+      function cleanDoctypeText(){
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+        const nodes = [];
+        let n;
+        while(n = walker.nextNode()) nodes.push(n);
+        nodes.forEach(node=>{
+          if(!node.nodeValue) return;
+          const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, '');
+          if(cleaned !== node.nodeValue) node.nodeValue = cleaned;
+        });
+      }
+      cleanDoctypeText();
+
+      // Recompute particles on resize
+      let resizeTimeout;
+      window.addEventListener('resize', ()=>{
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(()=>{
+          // remove existing, re-create
+          particlesEl.innerHTML = '';
+          const count = Math.min(Math.max(Math.floor(window.innerWidth / 60), 12), 60);
+          for(let i=0;i<count;i++){
+            const p = document.createElement('div'); p.className='particle'; p.dataset.size=sizes[Math.floor(Math.random()*sizes.length)]; p.style.left = Math.random()*100+'%'; p.style.top = Math.random()*100+'%'; p.style.opacity = (0.12 + Math.random()*0.6).toFixed(2); particlesEl.appendChild(p);
+          }
+        }, 250);
+      });
+
+      // small entry animation: fade in hero elements
+      window.requestAnimationFrame(()=>{
+        document.querySelectorAll('.hero-content > *').forEach((el,i)=>{ el.style.opacity=0; el.style.transform='translateY(10px)'; setTimeout(()=>{ el.style.transition='all 420ms cubic-bezier(.2,.9,.3,1)'; el.style.opacity=1; el.style.transform='translateY(0)'; }, 120*i); });
+      });
+
+    })();
+  </script>
+
+  <!-- Defensive JS: keep cleaning doctype nodes just in case -->
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+      const nodes=[]; let n; while(n = walker.nextNode()) nodes.push(n);
+      nodes.forEach(node=>{ if(!node.nodeValue) return; const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, ''); if(cleaned !== node.nodeValue) node.nodeValue = cleaned; });
+    });
+  </script>
+  <script>
+    // Start downloading the resume immediately when the Resume button is clicked.
+    (function(){
+      const resumeBtn = document.getElementById('resumeBtn') || document.querySelector('.resume-btn');
+      const resumeHref = 'https://raw.githubusercontent.com/bhargav180620/bhargav180620.github.io/main/Bhargav_Bhandari_CV%20.pdf'; // file in same folder
+      if(resumeBtn){
+        resumeBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          // create a hidden anchor with download attribute to force browser download
+          const a = document.createElement('a');
+          a.href = resumeHref;
+          a.download = 'Bhargav_Bhandari_CV.pdf';
+          // For safety append to DOM, click and remove
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
+
         Array.from(techStack.children).forEach((b, i)=>{
           const dx = (x*(6 + i)) * (i%2?1:-1);
           const dy = (y*(4 + i%3));
@@ -443,24 +513,97 @@
       nodes.forEach(node=>{ if(!node.nodeValue) return; const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, ''); if(cleaned !== node.nodeValue) node.nodeValue = cleaned; });
     });
   </script>
+
+  <!-- Extra interactions, download handler & contact handling -->
   <script>
-    // Start downloading the resume immediately when the Resume button is clicked.
     (function(){
+      // Resume download: direct raw GitHub URL
       const resumeBtn = document.getElementById('resumeBtn') || document.querySelector('.resume-btn');
-      const resumeHref = 'https://raw.githubusercontent.com/bhargav180620/bhargav180620.github.io/main/Bhargav_Bhandari_CV%20.pdf'; // file in same folder
+      const resumeHref = 'https://raw.githubusercontent.com/bhargav180620/bhargav180620.github.io/main/Bhargav_Bhandari_CV%20.pdf';
       if(resumeBtn){
         resumeBtn.addEventListener('click', function(e){
           e.preventDefault();
-          // create a hidden anchor with download attribute to force browser download
           const a = document.createElement('a');
           a.href = resumeHref;
           a.download = 'Bhargav_Bhandari_CV.pdf';
-          // For safety append to DOM, click and remove
           document.body.appendChild(a);
           a.click();
           a.remove();
         });
       }
+
+      // Add more interactive hover effects (respect prefers-reduced-motion)
+      if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Project card tilt
+        document.querySelectorAll('.project-card').forEach(card => {
+          card.style.transformOrigin = 'center';
+          card.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5; // -0.5..0.5
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            const tiltX = (y * 10).toFixed(2);
+            const tiltY = (x * -10).toFixed(2);
+            const tx = (x * 6).toFixed(1);
+            const ty = (y * -6).toFixed(1);
+            card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translate3d(${tx}px, ${ty}px, 0)`;
+            card.style.transition = 'transform 0s';
+          });
+          card.addEventListener('pointerleave', () => {
+            card.style.transition = 'transform 320ms cubic-bezier(.2,.9,.3,1)';
+            card.style.transform = '';
+          });
+        });
+
+        // Timeline item lift
+        document.querySelectorAll('.timeline-item').forEach(item => {
+          item.addEventListener('pointerenter', ()=>{
+            item.style.transition = 'transform 220ms ease, box-shadow 220ms ease';
+            item.style.transform = 'translateY(-6px)';
+            item.style.boxShadow = '0 18px 50px rgba(2,6,23,0.6)';
+          });
+          item.addEventListener('pointerleave', ()=>{
+            item.style.transform = '';
+            item.style.boxShadow = '';
+          });
+        });
+
+        // Info items slight parallax on move
+        document.querySelectorAll('.info-item').forEach(info => {
+          info.addEventListener('pointermove', (e)=>{
+            const r = info.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            info.style.transform = `translate3d(${(x*6).toFixed(1)}px, ${(y*-4).toFixed(1)}px, 0)`;
+            info.style.transition = 'transform 0s';
+          });
+          info.addEventListener('pointerleave', ()=>{ info.style.transform=''; info.style.transition='transform 220ms ease'; });
+        });
+      }
+
+      // Contact form handler: opens default mail client with prefilled details
+      window.handleContactSubmit = function(e){
+        e.preventDefault();
+        const form = e.target;
+        const name = form.name ? form.name.value.trim() : '';
+        const email = form.email ? form.email.value.trim() : '';
+        const subject = form.subject ? form.subject.value.trim() : 'Contact from portfolio';
+        const message = form.message ? form.message.value.trim() : '';
+
+        const to = 'bhargavbhandari90@gmail.com';
+        const bodyParts = [];
+        if (name) bodyParts.push('Name: ' + name);
+        if (email) bodyParts.push('Email: ' + email);
+        if (message) {
+          bodyParts.push('');
+          bodyParts.push(message);
+        }
+        // Use '\n' explicitly for newlines; ensure it's encoded properly
+        const body = encodeURIComponent(bodyParts.join('\n'));
+        const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${body}`;
+        // Redirect to mail client
+        window.location.href = mailto;
+        return false;
+      };
     })();
   </script>
 </body>
