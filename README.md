@@ -127,7 +127,7 @@
         <a href="#projects">Projects</a>
         <a href="#experience">Experience</a>
         <a href="#contact">Contact</a>
-        <a href="Bhargav_Bhandari_CV.pdf" class="resume-btn" target="_blank" rel="noreferrer">Resume</a>
+        <a href="Bhargav_Bhandari_CV.pdf" class="resume-btn" id="resumeBtn">Resume</a>
       </nav>
     </header>
 
@@ -442,6 +442,26 @@
       const nodes=[]; let n; while(n = walker.nextNode()) nodes.push(n);
       nodes.forEach(node=>{ if(!node.nodeValue) return; const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, ''); if(cleaned !== node.nodeValue) node.nodeValue = cleaned; });
     });
+  </script>
+  <script>
+    // Start downloading the resume immediately when the Resume button is clicked.
+    (function(){
+      const resumeBtn = document.getElementById('resumeBtn') || document.querySelector('.resume-btn');
+      const resumeHref = 'Bhargav_Bhandari_CV.pdf'; // file in same folder
+      if(resumeBtn){
+        resumeBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          // create a hidden anchor with download attribute to force browser download
+          const a = document.createElement('a');
+          a.href = resumeHref;
+          a.download = 'Bhargav_Bhandari_CV.pdf';
+          // For safety append to DOM, click and remove
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        });
+      }
+    })();
   </script>
 </body>
 </html>
