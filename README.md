@@ -103,19 +103,19 @@
     /* Responsive */
     @media (max-width: 1024px) { .hero { grid-template-columns: 1fr; } .info-card { margin-top: 30px; } }
     @media (max-width: 768px) { body { padding: 0 16px; } header { flex-direction: column; gap: 20px; text-align: center; } nav { flex-direction: column; gap: 12px; } .hero h1 { font-size: 2.5rem; } .logo { margin: 0 auto; } }
+    /* keyboard focus outlines for accessibility */
+    .show-focus-outlines :focus { outline: 3px solid rgba(6,182,212,0.18); outline-offset: 3px; border-radius: 6px; }
   </style>
 </head>
 <body>
   <!-- Animated background particles (interactive) -->
-  <div class="particles" aria-hidden="true">
-    <!-- We'll create particles programmatically for variety -->
-  </div>
+  <div class="particles" aria-hidden="true"></div>
 
   <div class="wrap">
     <!-- Header -->
     <header>
       <div class="brand">
-        <div class="logo" id="logo">BB</div>
+        <div class="logo" id="logo" aria-label="Bhargav Bhandari logo">BB</div>
         <div class="brand-text">
           <h2>Bhargav Bhandari</h2>
           <p>Data Engineer · ETL · Platform & Observability</p>
@@ -301,245 +301,131 @@
     </footer>
   </div>
 
-  <!-- Interactive JS: particles, parallax, draggable logo, subtle cursor effects -->
+  <!-- Consolidated interactive JS (particles, parallax, draggable logo, hover effects, contact handler, defensive cleaning) -->
   <script>
-    (function(){
-      // --- Particles generation ---
+    (function () {
+      /* Shared variables used across features */
       const particlesEl = document.querySelector('.particles');
-      const PARTICLE_COUNT = Math.min(Math.max(Math.floor(window.innerWidth / 60), 12), 60);
       const sizes = ['s','m','l'];
-      for(let i=0;i<PARTICLE_COUNT;i++){
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.dataset.size = sizes[Math.floor(Math.random()*sizes.length)];
-        // random position
-        p.style.left = Math.random()*100 + '%';
-        p.style.top = Math.random()*100 + '%';
-        p.style.opacity = (0.15 + Math.random()*0.6).toFixed(2);
-        p.style.transform = `translate3d(0,0,0)`;
-        p.style.pointerEvents = 'none';
-        particlesEl.appendChild(p);
-      }
 
-      // --- Parallax on mouse move ---
+      // --- Particles generation ---
+      function createParticles() {
+        particlesEl.innerHTML = '';
+        const PARTICLE_COUNT = Math.min(Math.max(Math.floor(window.innerWidth / 60), 12), 60);
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const p = document.createElement('div');
+          p.className = 'particle';
+          p.dataset.size = sizes[Math.floor(Math.random() * sizes.length)];
+          p.style.left = Math.random() * 100 + '%';
+          p.style.top = Math.random() * 100 + '%';
+          p.style.opacity = (0.12 + Math.random() * 0.6).toFixed(2);
+          p.style.transform = 'translate3d(0,0,0)';
+          p.style.pointerEvents = 'none';
+          particlesEl.appendChild(p);
+        }
+      }
+      createParticles();
+
+      // Recompute particles on resize (debounced)
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(createParticles, 250);
+      });
+
+      // --- Parallax on mouse move for hero area ---
       const hero = document.getElementById('hero');
       const heroContent = document.getElementById('heroContent');
       const infoCard = document.getElementById('infoCard');
       const techStack = document.getElementById('techStack');
 
-      function handleMove(e){
+      function handleHeroMove(e) {
         const rect = hero.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5..0.5
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         // subtle 3D tilt for hero content
-        heroContent.style.transform = `translateZ(0) rotateX(${(-y*6).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg)`;
+        heroContent.style.transform = `translateZ(0) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
         // info card moves slightly opposite
-        infoCard.style.transform = `translate3d(${(-x*12).toFixed(2)}px,${(-y*8).toFixed(2)}px,0)`;
-        // tech badges float<!doctype html>
-      function handleFirstTab(e){ if(e.key === 'Tab'){ document.body.classList.add('show-focus-outlines'); window.removeEventListener('keydown', handleFirstTab); }}
-      window.addEventListener('keydown', handleFirstTab);
+        infoCard.style.transform = `translate3d(${(-x * 12).toFixed(2)}px,${(-y * 8).toFixed(2)}px,0)`;
 
-      // --- Defensive: remove stray doctype-like text nodes inserted in body ---
-      function cleanDoctypeText(){
-        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-        const nodes = [];
-        let n;
-        while(n = walker.nextNode()) nodes.push(n);
-        nodes.forEach(node=>{
-          if(!node.nodeValue) return;
-          const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, '');
-          if(cleaned !== node.nodeValue) node.nodeValue = cleaned;
-        });
-      }
-      cleanDoctypeText();
-
-      // Recompute particles on resize
-      let resizeTimeout;
-      window.addEventListener('resize', ()=>{
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(()=>{
-          // remove existing, re-create
-          particlesEl.innerHTML = '';
-          const count = Math.min(Math.max(Math.floor(window.innerWidth / 60), 12), 60);
-          for(let i=0;i<count;i++){
-            const p = document.createElement('div'); p.className='particle'; p.dataset.size=sizes[Math.floor(Math.random()*sizes.length)]; p.style.left = Math.random()*100+'%'; p.style.top = Math.random()*100+'%'; p.style.opacity = (0.12 + Math.random()*0.6).toFixed(2); particlesEl.appendChild(p);
-          }
-        }, 250);
-      });
-
-      // small entry animation: fade in hero elements
-      window.requestAnimationFrame(()=>{
-        document.querySelectorAll('.hero-content > *').forEach((el,i)=>{ el.style.opacity=0; el.style.transform='translateY(10px)'; setTimeout(()=>{ el.style.transition='all 420ms cubic-bezier(.2,.9,.3,1)'; el.style.opacity=1; el.style.transform='translateY(0)'; }, 120*i); });
-      });
-
-    })();
-  </script>
-
-  <!-- Defensive JS: keep cleaning doctype nodes just in case -->
-  <script>
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-      const nodes=[]; let n; while(n = walker.nextNode()) nodes.push(n);
-      nodes.forEach(node=>{ if(!node.nodeValue) return; const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, ''); if(cleaned !== node.nodeValue) node.nodeValue = cleaned; });
-    });
-  </script>
-  <script>
-    // Start downloading the resume immediately when the Resume button is clicked.
-    (function(){
-      const resumeBtn = document.getElementById('resumeBtn') || document.querySelector('.resume-btn');
-      const resumeHref = 'https://raw.githubusercontent.com/bhargav180620/bhargav180620.github.io/main/Bhargav_Bhandari_CV%20.pdf'; // file in same folder
-      if(resumeBtn){
-        resumeBtn.addEventListener('click', function(e){
-          e.preventDefault();
-          // create a hidden anchor with download attribute to force browser download
-          const a = document.createElement('a');
-          a.href = resumeHref;
-          a.download = 'Bhargav_Bhandari_CV.pdf';
-          // For safety append to DOM, click and remove
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
-      }
-    })();
-  </script>
-</body>
-</html>
-
-        Array.from(techStack.children).forEach((b, i)=>{
-          const dx = (x*(6 + i)) * (i%2?1:-1);
-          const dy = (y*(4 + i%3));
-          b.style.transform = `translate3d(${dx.toFixed(1)}px,${dy.toFixed(1)}px,0) rotate(${(dx/8).toFixed(2)}deg)`;
+        // tech badges float
+        Array.from(techStack.children).forEach((b, i) => {
+          const dx = (x * (6 + i)) * (i % 2 ? 1 : -1);
+          const dy = (y * (4 + i % 3));
+          b.style.transform = `translate3d(${dx.toFixed(1)}px,${dy.toFixed(1)}px,0) rotate(${(dx / 8).toFixed(2)}deg)`;
         });
 
         // move particles with parallax effect based on mouse
-        document.querySelectorAll('.particle').forEach((p, idx)=>{
+        document.querySelectorAll('.particle').forEach((p, idx) => {
           const depth = p.dataset.size === 'l' ? 0.3 : (p.dataset.size === 'm' ? 0.5 : 0.8);
-          const moveX = x * 40 * depth * (idx%2?1:-1);
-          const moveY = y * 30 * depth * (idx%3?1:-1);
+          const moveX = x * 40 * depth * (idx % 2 ? 1 : -1);
+          const moveY = y * 30 * depth * (idx % 3 ? 1 : -1);
           p.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
         });
       }
 
-      // when pointer leaves hero area, reset transforms smoothly
-      hero.addEventListener('pointermove', handleMove);
-      hero.addEventListener('pointerleave', ()=>{
-        heroContent.style.transform = '';
-        infoCard.style.transform = '';
-        techStack.querySelectorAll('.tech-badge').forEach(b=>b.style.transform='');
-        document.querySelectorAll('.particle').forEach(p=>p.style.transform='');
-      });
+      if (hero) {
+        hero.addEventListener('pointermove', handleHeroMove);
+        hero.addEventListener('pointerleave', () => {
+          heroContent.style.transform = '';
+          infoCard.style.transform = '';
+          techStack.querySelectorAll('.tech-badge').forEach(b => b.style.transform = '');
+          document.querySelectorAll('.particle').forEach(p => p.style.transform = '');
+        });
+      }
 
       // --- Draggable logo ---
       const logo = document.getElementById('logo');
-      let dragging = false, startX=0, startY=0, origX=0, origY=0;
-      logo.addEventListener('pointerdown', (e)=>{
-        dragging = true; startX = e.clientX; startY = e.clientY;
-        const rect = logo.getBoundingClientRect(); origX = rect.left; origY = rect.top;
-        logo.setPointerCapture(e.pointerId);
-        logo.style.transition = 'none';
-      });
-      window.addEventListener('pointermove', (e)=>{
-        if(!dragging) return;
-        const dx = e.clientX - startX; const dy = e.clientY - startY;
-        logo.style.position = 'relative';
-        logo.style.left = dx + 'px';
-        logo.style.top = dy + 'px';
-        logo.style.transform = `translateZ(0) rotate(${dx/12}deg) scale(1.02)`;
-      });
-      window.addEventListener('pointerup', (e)=>{
-        if(!dragging) return; dragging=false;
-        logo.releasePointerCapture && logo.releasePointerCapture(e.pointerId);
-        // animate back to original spot
-        logo.style.transition = 'all 400ms cubic-bezier(.2,.9,.3,1)';
-        logo.style.left = '0px'; logo.style.top = '0px'; logo.style.transform = '';
-        setTimeout(()=>{ logo.style.transition = ''; }, 500);
-      });
-
-      // --- Hover shine on buttons ---
-      document.querySelectorAll('.btn').forEach(btn=>{
-        btn.addEventListener('mousemove', (e)=>{
-          const r = btn.getBoundingClientRect(); const px = e.clientX - r.left; const py = e.clientY - r.top;
-          btn.style.boxShadow = `0 12px 30px rgba(6,182,212,0.12), ${ (px-r.width/2)/10 }px ${ (py-r.height/2)/10 }px 40px rgba(11,78,99,0.04)`;
+      if (logo) {
+        let dragging = false, startX = 0, startY = 0;
+        logo.addEventListener('pointerdown', (e) => {
+          dragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          logo.setPointerCapture && logo.setPointerCapture(e.pointerId);
+          logo.style.transition = 'none';
         });
-        btn.addEventListener('mouseleave', ()=> btn.style.boxShadow = '');
-      });
-
-      // --- Keyboard accessibility: focus outlines for keyboard users only ---
-      function handleFirstTab(e){ if(e.key === 'Tab'){ document.body.classList.add('show-focus-outlines'); window.removeEventListener('keydown', handleFirstTab); }}
-      window.addEventListener('keydown', handleFirstTab);
-
-      // --- Defensive: remove stray doctype-like text nodes inserted in body ---
-      function cleanDoctypeText(){
-        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-        const nodes = [];
-        let n;
-        while(n = walker.nextNode()) nodes.push(n);
-        nodes.forEach(node=>{
-          if(!node.nodeValue) return;
-          const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, '');
-          if(cleaned !== node.nodeValue) node.nodeValue = cleaned;
+        window.addEventListener('pointermove', (e) => {
+          if (!dragging) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          logo.style.position = 'relative';
+          logo.style.left = dx + 'px';
+          logo.style.top = dy + 'px';
+          logo.style.transform = `translateZ(0) rotate(${dx / 12}deg) scale(1.02)`;
         });
-      }
-      cleanDoctypeText();
-
-      // Recompute particles on resize
-      let resizeTimeout;
-      window.addEventListener('resize', ()=>{
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(()=>{
-          // remove existing, re-create
-          particlesEl.innerHTML = '';
-          const count = Math.min(Math.max(Math.floor(window.innerWidth / 60), 12), 60);
-          for(let i=0;i<count;i++){
-            const p = document.createElement('div'); p.className='particle'; p.dataset.size=sizes[Math.floor(Math.random()*sizes.length)]; p.style.left = Math.random()*100+'%'; p.style.top = Math.random()*100+'%'; p.style.opacity = (0.12 + Math.random()*0.6).toFixed(2); particlesEl.appendChild(p);
-          }
-        }, 250);
-      });
-
-      // small entry animation: fade in hero elements
-      window.requestAnimationFrame(()=>{
-        document.querySelectorAll('.hero-content > *').forEach((el,i)=>{ el.style.opacity=0; el.style.transform='translateY(10px)'; setTimeout(()=>{ el.style.transition='all 420ms cubic-bezier(.2,.9,.3,1)'; el.style.opacity=1; el.style.transform='translateY(0)'; }, 120*i); });
-      });
-
-    })();
-  </script>
-
-  <!-- Defensive JS: keep cleaning doctype nodes just in case -->
-  <script>
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-      const nodes=[]; let n; while(n = walker.nextNode()) nodes.push(n);
-      nodes.forEach(node=>{ if(!node.nodeValue) return; const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, ''); if(cleaned !== node.nodeValue) node.nodeValue = cleaned; });
-    });
-  </script>
-
-  <!-- Extra interactions, download handler & contact handling -->
-  <script>
-    (function(){
-      // Resume download: direct raw GitHub URL
-      const resumeBtn = document.getElementById('resumeBtn') || document.querySelector('.resume-btn');
-      const resumeHref = 'https://raw.githubusercontent.com/bhargav180620/bhargav180620.github.io/main/Bhargav_Bhandari_CV%20.pdf';
-      if(resumeBtn){
-        resumeBtn.addEventListener('click', function(e){
-          e.preventDefault();
-          const a = document.createElement('a');
-          a.href = resumeHref;
-          a.download = 'Bhargav_Bhandari_CV.pdf';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
+        window.addEventListener('pointerup', (e) => {
+          if (!dragging) return;
+          dragging = false;
+          logo.releasePointerCapture && logo.releasePointerCapture(e.pointerId);
+          // animate back to original spot
+          logo.style.transition = 'all 400ms cubic-bezier(.2,.9,.3,1)';
+          logo.style.left = '0px';
+          logo.style.top = '0px';
+          logo.style.transform = '';
+          setTimeout(() => { logo.style.transition = ''; }, 500);
         });
       }
 
-      // Add more interactive hover effects (respect prefers-reduced-motion)
+      // --- Hover shine & subtle shadows on buttons ---
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const r = btn.getBoundingClientRect();
+          const px = e.clientX - r.left;
+          const py = e.clientY - r.top;
+          btn.style.boxShadow = `0 12px 30px rgba(6,182,212,0.12), ${ (px - r.width / 2) / 10 }px ${ (py - r.height / 2) / 10 }px 40px rgba(11,78,99,0.04)`;
+        });
+        btn.addEventListener('mouseleave', () => btn.style.boxShadow = '');
+      });
+
+      // --- Respect prefers-reduced-motion, but add other interactive effects otherwise ---
       if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         // Project card tilt
         document.querySelectorAll('.project-card').forEach(card => {
           card.style.transformOrigin = 'center';
           card.addEventListener('pointermove', (e) => {
             const r = card.getBoundingClientRect();
-            const x = (e.clientX - r.left) / r.width - 0.5; // -0.5..0.5
+            const x = (e.clientX - r.left) / r.width - 0.5;
             const y = (e.clientY - r.top) / r.height - 0.5;
             const tiltX = (y * 10).toFixed(2);
             const tiltY = (x * -10).toFixed(2);
@@ -556,12 +442,12 @@
 
         // Timeline item lift
         document.querySelectorAll('.timeline-item').forEach(item => {
-          item.addEventListener('pointerenter', ()=>{
+          item.addEventListener('pointerenter', () => {
             item.style.transition = 'transform 220ms ease, box-shadow 220ms ease';
             item.style.transform = 'translateY(-6px)';
             item.style.boxShadow = '0 18px 50px rgba(2,6,23,0.6)';
           });
-          item.addEventListener('pointerleave', ()=>{
+          item.addEventListener('pointerleave', () => {
             item.style.transform = '';
             item.style.boxShadow = '';
           });
@@ -569,19 +455,65 @@
 
         // Info items slight parallax on move
         document.querySelectorAll('.info-item').forEach(info => {
-          info.addEventListener('pointermove', (e)=>{
+          info.addEventListener('pointermove', (e) => {
             const r = info.getBoundingClientRect();
             const x = (e.clientX - r.left) / r.width - 0.5;
             const y = (e.clientY - r.top) / r.height - 0.5;
-            info.style.transform = `translate3d(${(x*6).toFixed(1)}px, ${(y*-4).toFixed(1)}px, 0)`;
+            info.style.transform = `translate3d(${(x * 6).toFixed(1)}px, ${(y * -4).toFixed(1)}px, 0)`;
             info.style.transition = 'transform 0s';
           });
-          info.addEventListener('pointerleave', ()=>{ info.style.transform=''; info.style.transition='transform 220ms ease'; });
+          info.addEventListener('pointerleave', () => { info.style.transform = ''; info.style.transition = 'transform 220ms ease'; });
         });
       }
 
-      // Contact form handler: opens default mail client with prefilled details
-      window.handleContactSubmit = function(e){
+      // --- Keyboard accessibility: focus outlines for keyboard users only (fire once) ---
+      function handleFirstTab(e) {
+        if (e.key === 'Tab') {
+          document.body.classList.add('show-focus-outlines');
+          window.removeEventListener('keydown', handleFirstTab);
+        }
+      }
+      window.addEventListener('keydown', handleFirstTab);
+
+      // --- Defensive: remove stray doctype-like text nodes inserted in body ---
+      function cleanDoctypeText() {
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+        const nodes = [];
+        let n;
+        while (n = walker.nextNode()) nodes.push(n);
+        nodes.forEach(node => {
+          if (!node.nodeValue) return;
+          const cleaned = node.nodeValue.replace(/<\s*(!?doctype|ldoctype)[^>]*>/ig, '');
+          if (cleaned !== node.nodeValue) node.nodeValue = cleaned;
+        });
+      }
+      // run it now and also on DOMContentLoaded to be defensive
+      cleanDoctypeText();
+      document.addEventListener('DOMContentLoaded', cleanDoctypeText);
+
+      // --- Resume download handler (forces download via a hidden anchor) ---
+      (function attachResumeHandler() {
+        const resumeBtn = document.getElementById('resumeBtn') || document.querySelector('.resume-btn');
+        const resumeHref = 'https://raw.githubusercontent.com/bhargav180620/bhargav180620.github.io/main/Bhargav_Bhandari_CV%20.pdf';
+        if (resumeBtn) {
+          resumeBtn.addEventListener('click', function (e) {
+            // allow Ctrl/Meta+click and right-click open in new tab by checking modifier keys
+            if (e.ctrlKey || e.metaKey || e.button === 1) {
+              return; // fall back to default browser behavior
+            }
+            e.preventDefault();
+            const a = document.createElement('a');
+            a.href = resumeHref;
+            a.download = 'Bhargav_Bhandari_CV.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          });
+        }
+      })();
+
+      // --- Contact form handler: opens default mail client with prefilled details ---
+      window.handleContactSubmit = function (e) {
         e.preventDefault();
         const form = e.target;
         const name = form.name ? form.name.value.trim() : '';
@@ -594,16 +526,30 @@
         if (name) bodyParts.push('Name: ' + name);
         if (email) bodyParts.push('Email: ' + email);
         if (message) {
-          bodyParts.push('');
+          if (bodyParts.length) bodyParts.push(''); // blank line between metadata and message
           bodyParts.push(message);
         }
         // Use '\n' explicitly for newlines; ensure it's encoded properly
         const body = encodeURIComponent(bodyParts.join('\n'));
-        const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${body}`;
+        const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${body}`;
         // Redirect to mail client
         window.location.href = mailto;
         return false;
       };
+
+      // --- Entry animation for hero elements (small stagger) ---
+      window.requestAnimationFrame(() => {
+        document.querySelectorAll('.hero-content > *').forEach((el, i) => {
+          el.style.opacity = 0;
+          el.style.transform = 'translateY(10px)';
+          setTimeout(() => {
+            el.style.transition = 'all 420ms cubic-bezier(.2,.9,.3,1)';
+            el.style.opacity = 1;
+            el.style.transform = 'translateY(0)';
+          }, 120 * i);
+        });
+      });
+
     })();
   </script>
 </body>
